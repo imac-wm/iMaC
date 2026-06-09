@@ -1,0 +1,5 @@
+from .transformer_wan_condition_wm_rnd_stage_two_vda import WanConditionWMRNDStageTwoVDAModel
+
+
+class WanConditionWMRNDStageTwoDA3Model(WanConditionWMRNDStageTwoVDAModel):
+    pass
