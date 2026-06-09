@@ -2,14 +2,12 @@
 ### [Project Page](https://imac-wm.github.io/) | [Data](https://huggingface.co/datasets/open-gigaai/CVPR-2026-WorldModel-Track-Dataset)
 
 
-## Method 
-
-Method Pipeline:
 ![overview](./asserts/pipeline.png)
 
 ## Demo
 
 World model as evaluator:
+
 ![demo](./asserts/teaser.gif)
 
 
