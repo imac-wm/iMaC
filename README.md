@@ -3,7 +3,7 @@
 
 
 
-![demo](./assets/teaser.mp4)
+![demo](./asserts/teaser.mp4)
 
 
 This repository contains the training, preprocessing, and inference code for
