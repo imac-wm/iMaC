@@ -23,6 +23,7 @@ three iMaC workflows:
 
 This README is the reproducible entry point for running the released code.
 
+This project has been tested on A800 GPUs with 80GB VRAM, using PyTorch 2.7.1+cu126.
 
 ```text
 iMac/
@@ -40,6 +41,7 @@ scripts/
   process_depth_da3_worldarena_testdata.py
   process_3d_condition.py
   process_3d_condition_worldarena_testdata.py
+  process_depth_DA3.py
 third_party/
   giga-train/
   giga-datasets/
@@ -61,9 +63,9 @@ pip install -e third_party/giga-models
 
 Install the remaining runtime dependencies used by your workflow, including
 PyTorch, Diffusers, Accelerate, Decord, OpenCV, ImageIO, HDF5, Blosc, SciPy,
-Trimesh, Robotics Toolbox, and the `depth_anything_3` package.
+Trimesh, Robotics Toolbox, and the [depth_anything_3](https://github.com/ByteDance-Seed/depth-anything-3) package.
 
-For online RND evaluation, install RobotWin 2.0 separately and configure the
+For online RND evaluation, install [RobotWin 2.0](https://robotwin-platform.github.io/doc/usage/robotwin-install.html) separately and configure the
 simulator assets required by `simulator/script/run_simulator_server.py`.
 
 ## Path Configuration
@@ -116,6 +118,37 @@ Download the dataset and pack the training split:
 python scripts/pack_training_data.py \
   --data_dir "$CVPR2026_WM_DATA_DIR" \
   --task all
+```
+
+Next, generate depth map labels using DA3:
+
+```
+  python scripts/process_depth_DA3.py \
+    --dataset_path /path/to/task1/train /path/to/task2/train \
+    --da3_model_path /path/to/DA3/model \
+    --gpu_ids 0 1 2 3
+```
+The dataset structure will be:
+
+```
+CVPR2026_WM_DATA_DIR/
+├── task1/
+│   ├── evaluator
+│   │   ├── episode_0
+│   │   ├── episode_1
+│   │   ├── ...
+│   ├── train
+│   │   ├── depth
+│   │   ├── labels
+│   │   ├── metas
+│   │   ├── simulator
+│   │   ├── trajectories
+│   │   ├── videos
+│   │   ├── config.json
+│   ├── video_quality
+│   │   ├── episode_0
+│   │   ├── episode_1
+│   │   ├── ...
 ```
 
 RND-mix expects three synchronized RGB videos, three DA3 metric-depth videos,
@@ -176,6 +209,7 @@ images are the only condition branch.
 ### Train
 
 ```bash
+# The current version requires 8 GPUs, each with more than 70GB of VRAM.
 python scripts/launch_train.py --preset baseline_rnd_mix_stage_one_alltask
 ```
 
@@ -211,6 +245,7 @@ Stage two initializes from stage one and adds `replay_3d_condition` and
 ```bash
 export RND_MIX_STAGE_ONE_CHECKPOINT=/path/to/stage_one/checkpoint/transformer
 
+# The current version requires 8 GPUs, each with more than 70GB of VRAM.
 python scripts/launch_train.py --preset baseline_rnd_mix_stage_two_alltask
 ```
 
